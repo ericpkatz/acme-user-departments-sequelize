@@ -1,0 +1,63 @@
+<html>
+  <body style='font-family: verdana'>
+    <h1>Acme Users and Departments Sequelize</h1>
+    <div style='width: 50%;float:left'>
+    <form action='/departments' method='POST'>
+      <div>
+        <label>Department Name</label>
+        <input name='name' />
+      </div>
+      <button type='submit'>Save</button>
+    </form>
+    </div>
+
+    <div style='float:left;width:50%'>
+    <form action='/users' method='POST'>
+      <div>
+        <label>Users Name</label>
+        <input name='name' />
+      </div>
+      <button type='submit'>Save</button>
+    </form>
+    </div>
+    <br clear='all' />
+    <div>
+      {% for department in departments %}
+        <div style='border: solid 1px black; border-radius: 8px; padding:20px'>
+        {{ department.name }}
+        <br />
+        <form action='/departments/{{ department.id}}?_method=DELETE' method='POST'>
+          <button type='submit'>Delete</button>
+        </form>
+        </div>
+      {% endfor %}
+    </div>
+    <div>
+      {% for user in users %}
+      <div style='border: solid 1px black; border-radius: 8px; padding:20px'>
+        {{ user.name }}
+        <br />
+        {% for department in departments %}
+          {% if user.hasDepartment(department) %}
+          <form style='display:inline' action='/users/{{user.id}}/user_departments/{{ user.getUserDepartment(department) }}?_method=DELETE' method='POST'>
+            <button type='submit'><span>{{ department.name }}</span></button>
+          </form>
+          {% else %}
+          <form style='display:inline' action='/users/{{user.id}}/user_departments' method='POST'>
+            <input type='hidden' name='departmentId' value='{{department.id}}' />
+          <button type='submit'>
+          <span style='text-decoration:line-through'>{{ department.name }}</span>
+          </button>
+          </form>
+          {% endif %}
+        {% endfor %}
+          <div style='padding-top: 10px'>
+          <form action='/users/{{ user.id}}?_method=DELETE' method='POST'>
+            <button type='submit'>Delete</button>
+          </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
