@@ -1,0 +1,11 @@
+<div>
+  {% for department in departments %}
+    <div style='border: solid 1px black; border-radius: 8px; padding:20px; margin: 20px;'>
+    {{ department.name }}
+    <br />
+    <form action='/departments/{{ department.id}}?_method=DELETE' method='POST'>
+      <button type='submit'>Delete</button>
+    </form>
+    </div>
+  {% endfor %}
+</div>

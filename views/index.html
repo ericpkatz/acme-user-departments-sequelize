@@ -1,63 +1,59 @@
 <html>
+  <head>
+    <link rel='stylesheet' href='/public/styles.css' />
+  </head>
   <body style='font-family: verdana'>
     <h1>Acme Users and Departments Sequelize</h1>
-    <div style='width: 50%;float:left'>
-    <form action='/departments' method='POST'>
-      <div>
-        <label>Department Name</label>
-        <input name='name' />
-      </div>
-      <button type='submit'>Save</button>
-    </form>
-    </div>
+    {% include './_departmentForm.html' %}
+    {% include './_userForm.html' %}
 
-    <div style='float:left;width:50%'>
-    <form action='/users' method='POST'>
-      <div>
-        <label>Users Name</label>
-        <input name='name' />
-      </div>
-      <button type='submit'>Save</button>
-    </form>
-    </div>
     <br clear='all' />
-    <div>
-      {% for department in departments %}
-        <div style='border: solid 1px black; border-radius: 8px; padding:20px'>
-        {{ department.name }}
-        <br />
-        <form action='/departments/{{ department.id}}?_method=DELETE' method='POST'>
-          <button type='submit'>Delete</button>
-        </form>
-        </div>
-      {% endfor %}
-    </div>
-    <div>
-      {% for user in users %}
-      <div style='border: solid 1px black; border-radius: 8px; padding:20px'>
-        {{ user.name }}
-        <br />
-        {% for department in departments %}
-          {% if user.hasDepartment(department) %}
-          <form style='display:inline' action='/users/{{user.id}}/user_departments/{{ user.getUserDepartment(department) }}?_method=DELETE' method='POST'>
-            <button type='submit'><span>{{ department.name }}</span></button>
-          </form>
-          {% else %}
-          <form style='display:inline' action='/users/{{user.id}}/user_departments' method='POST'>
-            <input type='hidden' name='departmentId' value='{{department.id}}' />
-          <button type='submit'>
-          <span style='text-decoration:line-through'>{{ department.name }}</span>
-          </button>
-          </form>
-          {% endif %}
-        {% endfor %}
-          <div style='padding-top: 10px'>
-          <form action='/users/{{ user.id}}?_method=DELETE' method='POST'>
-            <button type='submit'>Delete</button>
-          </form>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
+    <table width='100%'>
+      <tr>
+        <th>Departments</th>
+        <th>Users</th>
+      </tr>
+      <tr valign='top'>
+      <td width='50%'>
+        {% include './_departmentsList.html' %}
+      </td>
+      <td width='50%'>
+        {% include './_usersList.html' %}
+      </td>
+      </tr>
+    </table>
+    <br />
+    <pre style='background-color: #efefef; padding: 20px; border-radius: 5px;'>
+files
+  server.js (~40 lines)
+  views/index.html
+  views/_departmentForm.html
+  views/_userForm.html
+  views/_usersList.html
+  views/_userItem.html
+  views/_departmentsList.html
+  routes
+    users.js (~30 lines)
+      POST /
+      DELETE /:id
+      DELETE  /:userId/user_departments/:id
+      POST /:userId/user_departments
+    departments.js (~20 lines)
+      POST /
+      DELETE /:id
+    db
+      db.js
+      index.js
+        seed
+        sync
+      User.js (~30 lines)
+        instanceMethods:
+          hasAllDepartments
+          hasNoDepartments
+          hasDepartment
+          getUserDepartment
+      Department.js (~10 lines)
+      UserDepartment.js (~10 lines)
+    </pre>
   </body>
 </html>

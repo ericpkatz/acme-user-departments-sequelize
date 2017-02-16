@@ -1,8 +1,11 @@
 const express = require('express');
 const swig = require('swig');
+const path = require('path');
+
 swig.setDefaults({ cache: false });
 
 const app = express();
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(require('method-override')('_method'));
 app.use(require('body-parser').urlencoded({ extended: false }));
@@ -23,52 +26,14 @@ const UserDepartment = models.UserDepartment;
 
 
 app.get('/', (req, res, next)=> {
-  const getStyle = (user, departments) => {
-    if(user.user_departments.length == 0) return 'background-color: #ccc';
-    if(user.user_departments.length === departments.length ) return 'background-color: #ffcc00';
-  }
   Promise.all([ User.findAll({ order: 'name', include: [ UserDepartment ]}), Department.findAll()])
-    .then( result => res.render('index', { users: result[0], departments: result[1], getStyle }))
+    .then( result => res.render('index', { users: result[0], departments: result[1] }))
     .catch(next);
 });
 
-app.post('/departments', (req, res, next)=> {
-  Department.create({ name: req.body.name })
-    .then( ()=> res.redirect('/'))
-    .catch(next);
-});
+app.use('/departments', require('./routes/departments'));
 
-app.delete('/departments/:id', (req, res, next)=> {
-  UserDepartment.destroy({ where: { departmentId: req.params.id}})
-    .then( ()=> Department.destroy({ where: { id: req.params.id }}))
-    .then( ()=> res.redirect('/'))
-    .catch(next);
-});
-
-app.post('/users', (req, res, next)=> {
-  User.create({ name: req.body.name })
-    .then( ()=> res.redirect('/'))
-    .catch(next);
-});
-
-app.delete('/users/:id', (req, res, next)=> {
-  UserDepartment.destroy({ where: { userId: req.params.id}})
-    .then( ()=> User.destroy({ where: { id: req.params.id }}))
-    .then( ()=> res.redirect('/'))
-    .catch(next);
-});
-
-app.delete('/users/:userId/user_departments/:id', (req, res, next)=> {
-  UserDepartment.destroy({ where: { id: req.params.id } })
-    .then(()=> res.redirect('/'))
-    .catch(next);
-});
-
-app.post('/users/:userId/user_departments', (req, res, next)=> {
-  UserDepartment.create({ userId: req.params.userId, departmentId: req.body.departmentId })
-    .then(()=> res.redirect('/'))
-    .catch(next);
-});
+app.use('/users', require('./routes/users'));
 
 db.seed()
   .then(()=> console.log('synched'))

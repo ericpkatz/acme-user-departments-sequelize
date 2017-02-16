@@ -1,0 +1,28 @@
+<div 
+  {%if user.hasAllDepartments(departments) %}class='all'{% endif %}
+  {%if user.hasNoDepartments(departments) %}class='none'{% endif %}
+
+  style='border: solid 1px black; border-radius: 8px; padding:20px; margin-bottom: 10px;'>
+  {{ user.name }}
+  <br />
+  {% for department in departments %}
+    {% if user.hasDepartment(department) %}
+    <form style='display:inline' action='/users/{{user.id}}/user_departments/{{ user.getUserDepartment(department) }}?_method=DELETE' method='POST'>
+      <button type='submit'><span>{{ department.name }}</span></button>
+    </form>
+    {% else %}
+    <form style='display:inline' action='/users/{{user.id}}/user_departments' method='POST'>
+      <input type='hidden' name='departmentId' value='{{department.id}}' />
+    <button type='submit'>
+    <span style='text-decoration:line-through'>{{ department.name }}</span>
+    </button>
+    </form>
+    {% endif %}
+  {% endfor %}
+    <div style='padding-top: 10px'>
+    <form action='/users/{{ user.id}}?_method=DELETE' method='POST'>
+      <button type='submit'>Delete</button>
+    </form>
+  </div>
+</div>
+

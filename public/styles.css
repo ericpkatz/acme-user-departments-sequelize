@@ -1,0 +1,20 @@
+.none {
+  background-color: #efefef;
+}
+
+.all {
+  background-color: #ffcc00;
+}
+
+input {
+  height: 3em;
+  width: 250px;
+  padding: 5px;
+}
+
+button {
+  height: 3em;
+  width: 25%;
+  margin: 10px;
+  border-radius: 5px;
+}
