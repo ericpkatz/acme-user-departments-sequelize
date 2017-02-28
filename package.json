@@ -16,6 +16,7 @@
   },
   "devDependencies": {},
   "scripts": {
+    "test": "DATABASE_URL=postgres://localhost/circle_test node ./node_modules/mocha/bin/mocha",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "DATABASE_URL=postgres://localhost/user_departments_db nodemon server",
     "test:dev": "DATABASE_URL=postgres://localhost/user_departments_db_test nodemon ./node_modules/mocha/bin/mocha"
